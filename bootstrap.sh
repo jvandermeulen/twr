@@ -41,5 +41,5 @@ else
 	git clone https://github.com/${git_org_name}/${git_repo_basename}.git
 fi
 
-ansible-playbook twr/playbooks/banner.yml
+ansible-playbook ${git_repo_basename}/playbooks/banner.yml
 
