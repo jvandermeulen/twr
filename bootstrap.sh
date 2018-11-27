@@ -10,10 +10,15 @@ blue=$(tput setaf 4)
 bold=$(tput bold)
 reset=$(tput sgr0)
 
+git_repo_basename=twr 		# tower-appliance
+git_org_name=jvandermeulen	# xforce-redhat
+
+
+
 RHSM_STATUS=$(subscription-manager status | awk '/^Overall Status/ {print $3}')
 case ${RHSM_STATUS} in
   Current)
-    echo ${green}System is properly subscribed.${reset} Trying to enable Ansible channel..
+    echo "${green}System is properly subscribed.${reset} Trying to enable Ansible channel..."
     subscription-manager repos --enable rhel-7-server-ansible-2-rpms || echo ${red}Failed${reset}
     ;;
 
@@ -27,9 +32,14 @@ case ${RHSM_STATUS} in
     ;;
 esac
 
+cd ~
+echo -n "${blue}Continue...${reset} Check for local copy of github repository ${git_repo_basename}..."
+if [ -d ~/${git_repo_basename} ]
+then
+	echo "${blue}Directory ${git_repo_basename} already exists. SKIP downloading.${reset}"
+else
+	git clone https://github.com/${git_org_name}/${git_repo_basename}.git
+fi
 
-#git clone https://github.com/xforce-redhat/tower-appliance.git
-git clone https://github.com/jvandermeulen/twr.git
+ansible-playbook twr/playbooks/banner.yml
 
-cd /root
-ansible-playbook playbooks/banner.yml
